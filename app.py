@@ -13,7 +13,7 @@ with st.sidebar as sidebar:
     st.title("Surface Parameters")
     form = st.form(key="Surface Parameters")
     ticker_name: str = form.text_input("Ticker", value="MSFT", help="Any ticker from Yahoo! Finance. For example try MSFT, AMZN, AAPL or GOOGL.")
-    risk_free_rate: float = form.number_input("Risk Free Rate (%)", value=1, help = "Annualized risk free rate.") / 100
+    risk_free_rate: float = form.number_input("Risk Free Rate (%)", value=4, help = "Annualized risk free rate.") / 100
     div_yield: float = form.number_input("Dividend Yield (%)", value=1, help= "Annualized dividend yield.") / 100
     min_moneyness: float = form.number_input(
         "Minimum Moneyness", value=0.8, min_value=0.5, max_value=2.0, step=0.05, help = "Any option with moneyness less than this value will be dropped. Recommended value is 0.8."
