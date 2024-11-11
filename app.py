@@ -20,7 +20,7 @@ with st.sidebar as sidebar:
     risk_free_rate: float = (
         form.number_input(
             "Risk Free Rate (%)",
-            value=4,
+            value=4.0,
             min_value=0.0,
             help="Annualized risk free rate.",
         )
@@ -29,7 +29,7 @@ with st.sidebar as sidebar:
     div_yield: float = (
         form.number_input(
             "Dividend Yield (%)",
-            value=1,
+            value=1.0,
             min_value=0.0,
             help="Annualized dividend yield.",
         )
