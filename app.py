@@ -123,11 +123,14 @@ with st.status("Generating Surface...", expanded=True) as status:
 
     calls_data.dropna(subset="implied_volatility_(%)", inplace=True)
 
-    # calls_data.sort_values(by='days_to_exp', ascending = False, inplace = True)
+    # calls_data.sort_values(by="days_to_exp", ascending = False, inplace = True)
     st.write("Creating graph...")
     x_data = (calls_data["days_to_exp"] / 365).values
+    
     y_data = calls_data["moneyness"].values
+    
     z_data = calls_data["implied_volatility_(%)"].values
+    
 
     x = np.linspace(x_data.min(), x_data.max(), 50)
     # y = np.linspace(y_data.min(), y_data.max(), 50)
@@ -147,12 +150,15 @@ with st.status("Generating Surface...", expanded=True) as status:
 
     fig.update_layout(width=1000, height=800)
 
-    fig.update_scenes(
-        xaxis_title="Time to Expiration (years)",
-        yaxis_title="Moneyness",
-        zaxis_title="Implied Volatility (%)",
+    fig.update_layout(
+        scene={
+            "xaxis": {"title":"Time to Expiration (years)","autorange":"reversed"},
+            "yaxis": {"title":"Moneyness","autorange":"reversed"},
+            "zaxis": {"title":"Implied Volatility (%)"}
+        }
     )
     status.update(label="Surface Done!", state="complete", expanded=False)
 
-st.title(f"Implied Volatility Surface for {Ticker.info['shortName']}")
+st.title(f"Implied Volatility Surface for {Ticker.info["shortName"]}")
+st.info("NOTE: The graph is interactive!", icon="ℹ️")
 st.plotly_chart(fig)
