@@ -58,7 +58,9 @@ if min_moneyness >= max_moneyness:
         "Minimum Moneyness must be less than Maximum Moneyness. Please enter new values."
     )
     st.stop()
-
+st.warning(
+    "Yahoo! Finance API is currently experiencing intermittent downtime. Data is missing for some (or all) strikes and interpolation may fail."
+)
 with st.status("Generating Surface...", expanded=True) as status:
     st.write("Fetching ticker data from Yahoo! Finance...")
     try:
@@ -126,39 +128,57 @@ with st.status("Generating Surface...", expanded=True) as status:
     # calls_data.sort_values(by="days_to_exp", ascending = False, inplace = True)
     st.write("Creating graph...")
     x_data = (calls_data["days_to_exp"] / 365).values
-    
+
     y_data = calls_data["moneyness"].values
-    
+
     z_data = calls_data["implied_volatility_(%)"].values
-    
+    try:
+        x = np.linspace(x_data.min(), x_data.max(), 50)
+        # y = np.linspace(y_data.min(), y_data.max(), 50)
+        y = np.linspace(min_moneyness, max_moneyness, 50)
 
-    x = np.linspace(x_data.min(), x_data.max(), 50)
-    # y = np.linspace(y_data.min(), y_data.max(), 50)
-    y = np.linspace(min_moneyness, max_moneyness, 50)
+        x_mesh, y_mesh = np.meshgrid(x, y)
 
-    x_mesh, y_mesh = np.meshgrid(x, y)
-    grid = griddata((x_data, y_data), z_data, (x_mesh, y_mesh), method="cubic")
-    grid = np.ma.array(grid, mask=np.isnan(grid))
+        grid = griddata((x_data, y_data), z_data, (x_mesh, y_mesh), method="cubic")
+        grid = np.ma.array(grid, mask=np.isnan(grid))
 
-    fig: go.Figure = go.Figure(
-        data=[
-            go.Surface(
-                x=x_mesh, y=y_mesh, z=grid, colorbar_title="Implied Volatility (%)"
-            )
-        ]
+        fig: go.Figure = go.Figure(
+            data=[
+                go.Surface(
+                    x=x_mesh, y=y_mesh, z=grid, colorbar_title="Implied Volatility (%)"
+                )
+            ]
+        )
+
+        fig.update_layout(width=1000, height=800)
+
+        fig.update_layout(
+            scene={
+                "xaxis": {
+                    "title": "Time to Expiration (years)",
+                    "autorange": "reversed",
+                },
+                "yaxis": {"title": "Moneyness", "autorange": "reversed"},
+                "zaxis": {"title": "Implied Volatility (%)"},
+            }
+        )
+        status.update(label="Surface Done!", state="complete", expanded=False)
+        generated_figure = True
+    except Exception:
+        status.update(
+            label="Not enough data to build a surface.", state="error", expanded=False
+        )
+        generated_figure = False
+
+if generated_figure:
+    st.title(f"Implied Volatility Surface for {Ticker.info["shortName"]}")
+    st.info("The graph is interactive!", icon="ℹ️")
+    st.plotly_chart(fig)
+else:
+    st.error(
+        "Yahoo! Finance API is currently not providing data in the given moneyness range. This should be resolved soon, please try again later."
     )
-
-    fig.update_layout(width=1000, height=800)
-
-    fig.update_layout(
-        scene={
-            "xaxis": {"title":"Time to Expiration (years)","autorange":"reversed"},
-            "yaxis": {"title":"Moneyness","autorange":"reversed"},
-            "zaxis": {"title":"Implied Volatility (%)"}
-        }
+    st.info(
+        "Consider widening the moneyness spread to at least visualize something. Note that due to the missing data the surface will be highly unstable.",
+        icon="ℹ️",
     )
-    status.update(label="Surface Done!", state="complete", expanded=False)
-
-st.title(f"Implied Volatility Surface for {Ticker.info["shortName"]}")
-st.info("NOTE: The graph is interactive!", icon="ℹ️")
-st.plotly_chart(fig)
