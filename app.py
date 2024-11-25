@@ -61,9 +61,6 @@ if min_moneyness >= max_moneyness:
 st.warning(
     "Yahoo! Finance API is currently experiencing intermittent downtime. Data is missing for some (or all) strikes and interpolation may fail."
 )
-st.warning(
-    "Yahoo! Finance API is currently experiencing intermittent downtime. Data is missing for some (or all) strikes and interpolation may fail."
-)
 with st.status("Generating Surface...", expanded=True) as status:
     st.write("Fetching ticker data from Yahoo! Finance...")
     try:
@@ -132,9 +129,7 @@ with st.status("Generating Surface...", expanded=True) as status:
     st.write("Creating graph...")
     x_data = (calls_data["days_to_exp"] / 365).values
 
-
     y_data = calls_data["moneyness"].values
-
 
     z_data = calls_data["implied_volatility_(%)"].values
     try:
@@ -146,10 +141,6 @@ with st.status("Generating Surface...", expanded=True) as status:
 
         grid = griddata((x_data, y_data), z_data, (x_mesh, y_mesh), method="cubic")
         grid = np.ma.array(grid, mask=np.isnan(grid))
-        x_mesh, y_mesh = np.meshgrid(x, y)
-
-        grid = griddata((x_data, y_data), z_data, (x_mesh, y_mesh), method="cubic")
-        grid = np.ma.array(grid, mask=np.isnan(grid))
 
         fig: go.Figure = go.Figure(
             data=[
@@ -158,15 +149,7 @@ with st.status("Generating Surface...", expanded=True) as status:
                 )
             ]
         )
-        fig: go.Figure = go.Figure(
-            data=[
-                go.Surface(
-                    x=x_mesh, y=y_mesh, z=grid, colorbar_title="Implied Volatility (%)"
-                )
-            ]
-        )
 
-        fig.update_layout(width=1000, height=800)
         fig.update_layout(width=1000, height=800)
 
         fig.update_layout(
