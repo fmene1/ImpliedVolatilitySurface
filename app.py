@@ -141,10 +141,6 @@ with st.status("Generating Surface...", expanded=True) as status:
         x = np.linspace(x_data.min(), x_data.max(), 50)
         # y = np.linspace(y_data.min(), y_data.max(), 50)
         y = np.linspace(min_moneyness, max_moneyness, 50)
-    try:
-        x = np.linspace(x_data.min(), x_data.max(), 50)
-        # y = np.linspace(y_data.min(), y_data.max(), 50)
-        y = np.linspace(min_moneyness, max_moneyness, 50)
 
         x_mesh, y_mesh = np.meshgrid(x, y)
 
