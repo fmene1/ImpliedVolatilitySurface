@@ -58,9 +58,9 @@ if min_moneyness >= max_moneyness:
         "Minimum Moneyness must be less than Maximum Moneyness. Please enter new values."
     )
     st.stop()
-st.warning(
-    "Yahoo! Finance API is currently experiencing intermittent downtime. Data is missing for some (or all) strikes and interpolation may fail."
-)
+#st.warning(
+#    "Yahoo! Finance API is currently experiencing intermittent downtime. Data is missing for some (or all) strikes and interpolation may fail."
+#)
 with st.status("Generating Surface...", expanded=True) as status:
     st.write("Fetching ticker data from Yahoo! Finance...")
     try:
@@ -173,7 +173,7 @@ with st.status("Generating Surface...", expanded=True) as status:
 if generated_figure:
     st.title(f"Implied Volatility Surface for {Ticker.info["shortName"]}")
     st.info("The graph is interactive!", icon="ℹ️")
-    st.warning("Due to missing data the surface is highly unstable.")
+    #st.warning("Due to missing data the surface is highly unstable.")
     st.plotly_chart(fig)
 else:
     st.error(
