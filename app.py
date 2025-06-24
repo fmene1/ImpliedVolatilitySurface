@@ -7,7 +7,12 @@ import streamlit as st
 import black_scholes_merton as bsm
 
 
-st.set_page_config(layout="wide")
+st.set_page_config(
+    page_title="ImpliedVolatilityCalculator",
+    page_icon=":chart_with_upwards_trend:",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
 with st.sidebar as sidebar:
     st.title("Surface Parameters")
@@ -58,9 +63,9 @@ if min_moneyness >= max_moneyness:
         "Minimum Moneyness must be less than Maximum Moneyness. Please enter new values."
     )
     st.stop()
-#st.warning(
+# st.warning(
 #    "Yahoo! Finance API is currently experiencing intermittent downtime. Data is missing for some (or all) strikes and interpolation may fail."
-#)
+# )
 with st.status("Generating Surface...", expanded=True) as status:
     st.write("Fetching ticker data from Yahoo! Finance...")
     try:
@@ -171,9 +176,9 @@ with st.status("Generating Surface...", expanded=True) as status:
         generated_figure = False
 
 if generated_figure:
-    st.title(f"Implied Volatility Surface for {Ticker.info["shortName"]}")
+    st.title(f"Implied Volatility Surface for {Ticker.info['shortName']}")
     st.info("The graph is interactive!", icon="ℹ️")
-    #st.warning("Due to missing data the surface is highly unstable.")
+    # st.warning("Due to missing data the surface is highly unstable.")
     st.plotly_chart(fig)
 else:
     st.error(
